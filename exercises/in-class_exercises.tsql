@@ -1,15 +1,12 @@
-
---In class SQL examples
+-- Example queries to be used with the NMEDW test database
 
 SELECT 2 + 4
 
-SELECT ROUND(2.5768, 2)
+SELECT ROUND(2.5834, 2)
 
-SELECT 'Dan' + ' is ' + 'funny'
+SELECT 'hello' + ' there ' + 'friends!'
 
-SELECT UPPER('dan')
-
-
+SELECT UPPER('hello')
 
 
 --INNER JOIN
