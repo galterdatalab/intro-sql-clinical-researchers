@@ -23,6 +23,8 @@
 *.tsv      text
 *.txt      text
 *.sql      text
+*.tsql     text
+*.mssql    text
 
 # Graphics
 *.png      binary
