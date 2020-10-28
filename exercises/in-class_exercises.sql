@@ -1,5 +1,6 @@
 -- Example queries to be used with the NMEDW test database
 
+-- Basic operations
 SELECT 2 + 4
 
 SELECT ROUND(2.5834, 2)
@@ -8,9 +9,7 @@ SELECT 'hello' + ' there ' + 'friends!'
 
 SELECT UPPER('hello')
 
-
---INNER JOIN
-
+--INNER JOIN (The 'INNER' is optional)
 SELECT p.patient_id
 		, p.patient_nm
 		, p.dob
@@ -20,11 +19,7 @@ FROM edw_emr_ods.patients p
 	INNER JOIN edw_emr_ods.gender_codes gc
 	 ON p.gender_cd = gc.gender_code_id
 
-
-
-
---LEFT OUTER JOIN
-
+--LEFT OUTER JOIN (The 'OUTER' is optional)
 SELECT p.patient_id
 		, p.patient_nm
 		, p.dob
@@ -34,18 +29,15 @@ FROM edw_emr_ods.patients p
 	LEFT OUTER JOIN edw_emr_ods.gender_codes gc
 	 ON p.gender_cd = gc.gender_code_id
 
-
-
---The Cartesian JOIN
-
+--The Cartesian JOIN (Explicit)
 SELECT *
-FROM edw_emr_ods.patients p, edw_emr_ods.gender_codes gc
+FROM edw_emr_ods.patients p CROSS JOIN edw_emr_ods.gender_codes gc;
 
-
-
+--The Cartesian JOIN (Implicit)
+SELECT *
+FROM edw_emr_ods.patients p, edw_emr_ods.gender_codes gc;
 
 --DISTINCT
-
 SELECT pm.patient_id
 FROM edw_emr_ods.patient_mrns pm
 
@@ -53,24 +45,19 @@ SELECT DISTINCT pm.patient_id
 FROM edw_emr_ods.patient_mrns pm
 
 --BETWEEN
-
 SELECT *
 FROM edw_emr_ods.encounters enc
 WHERE enc.start_dts BETWEEN '01-01-2010' AND '01-01-2011'
 
 --LIKE
-
 SELECT *
 FROM edw_emr_ods.diagnoses d
 WHERE d.title LIKE '%HYPER%'
 
 
-
-
 --Aggregates
 
 --COUNT()
-
 SELECT COUNT(*)
 FROM edw_emr_ods.encounters e
 
@@ -78,16 +65,13 @@ SELECT COUNT(end_dts)
 FROM edw_emr_ods.encounters e
 
 --MAX(), MIN()
-
 SELECT MIN(end_dts)
 FROM edw_emr_ods.encounters e
 
 SELECT MAX(end_dts)
 FROM edw_emr_ods.encounters e
 
-
 --GROUP BY clauses
-
 SELECT p.patient_nm
 		, COUNT(e.encounter_id) AS enc_cnt
 		, YEAR(e.start_dts) AS enc_year
@@ -99,7 +83,6 @@ GROUP BY p.patient_nm
 ORDER BY patient_nm, enc_year
 
 --HAVING clauses
-
 SELECT p.patient_nm
 		, COUNT(e.encounter_id) AS enc_cnt
 		, YEAR(e.start_dts) AS enc_year
@@ -112,7 +95,6 @@ HAVING COUNT(e.encounter_id) >= 2
 ORDER BY patient_nm, enc_year
 
 --RANK()
-
 SELECT p.patient_id
 		, p.patient_nm
 		, e.start_dts
@@ -122,8 +104,6 @@ FROM edw_emr_ods.patients p
 	 ON p.patient_id = e.patient_id
 
 --DATEDIFF
-
-
 SELECT p.patient_id
 		, p.patient_nm
 		, e.start_dts
@@ -132,10 +112,6 @@ SELECT p.patient_id
 FROM edw_emr_ods.patients p
 	INNER JOIN edw_emr_ods.encounters e
 	 ON p.patient_id = e.patient_id
-
-
-
-
 
 --SUB QUERY
 SELECT x.patient_id
@@ -172,7 +148,7 @@ FROM patients_encounters pe
 WHERE pe.enc_rnk = 1
 
 
---TEMP TABLE
+-- TEMP TABLE
 SELECT p.patient_id
 	, p.patient_nm
 	, e.start_dts
