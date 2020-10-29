@@ -39,11 +39,25 @@ FROM edw_emr_ods.patients p
 RIGHT OUTER JOIN edw_emr_ods.gender_codes gc
 ON p.gender_cd = gc.gender_code_id
 
--- The Cartesian JOIN (Explicit)
+-- Self-join
+SELECT * FROM edw_emr_ods.patients
+
+SELECT p1.patient_id,
+       p1.patient_nm,
+       p2.patient_id,
+       p2.patient_nm,
+       p1.gender_cd
+FROM edw_emr_ods.patients p1
+INNER JOIN edw_emr_ods.patients p2
+ON p1.gender_cd = p2.gender_cd
+WHERE p1.patient_id < p2.patient_id
+ORDER BY p1.patient_id, p2.patient_id
+
+-- Cartesian JOIN (Explicit)
 SELECT *
 FROM edw_emr_ods.patients p CROSS JOIN edw_emr_ods.gender_codes gc;
 
--- The Cartesian JOIN (Implicit)
+-- Cartesian JOIN (Implicit)
 SELECT *
 FROM edw_emr_ods.patients p, edw_emr_ods.gender_codes gc;
 
@@ -54,34 +68,33 @@ FROM edw_emr_ods.patient_mrns pm
 SELECT DISTINCT pm.patient_id
 FROM edw_emr_ods.patient_mrns pm
 
---BETWEEN
+-- BETWEEN
 SELECT *
 FROM edw_emr_ods.encounters enc
 WHERE enc.start_dts BETWEEN '01-01-2010' AND '01-01-2011'
 
---LIKE
+-- LIKE
 SELECT *
 FROM edw_emr_ods.diagnoses d
 WHERE d.title LIKE '%HYPER%'
 
+-- Aggregates
 
---Aggregates
-
---COUNT()
+-- COUNT()
 SELECT COUNT(*)
 FROM edw_emr_ods.encounters e
 
 SELECT COUNT(end_dts)
 FROM edw_emr_ods.encounters e
 
---MAX(), MIN()
+-- MAX(), MIN()
 SELECT MIN(end_dts)
 FROM edw_emr_ods.encounters e
 
 SELECT MAX(end_dts)
 FROM edw_emr_ods.encounters e
 
---GROUP BY clauses
+-- GROUP BY clauses
 SELECT p.patient_nm
 		, COUNT(e.encounter_id) AS enc_cnt
 		, YEAR(e.start_dts) AS enc_year
@@ -92,7 +105,7 @@ GROUP BY p.patient_nm
 		, YEAR(e.start_dts)
 ORDER BY patient_nm, enc_year
 
---HAVING clauses
+-- HAVING clauses
 SELECT p.patient_nm
 		, COUNT(e.encounter_id) AS enc_cnt
 		, YEAR(e.start_dts) AS enc_year
@@ -104,7 +117,7 @@ GROUP BY p.patient_nm
 HAVING COUNT(e.encounter_id) >= 2
 ORDER BY patient_nm, enc_year
 
---RANK()
+-- RANK()
 SELECT p.patient_id
 		, p.patient_nm
 		, e.start_dts
@@ -113,7 +126,7 @@ FROM edw_emr_ods.patients p
 	INNER JOIN edw_emr_ods.encounters e
 	 ON p.patient_id = e.patient_id
 
---DATEDIFF
+-- DATEDIFF
 SELECT p.patient_id
 		, p.patient_nm
 		, e.start_dts
@@ -123,7 +136,7 @@ FROM edw_emr_ods.patients p
 	INNER JOIN edw_emr_ods.encounters e
 	 ON p.patient_id = e.patient_id
 
---SUB QUERY
+-- SUB QUERY
 SELECT x.patient_id
 		, x.patient_nm
 		, x.start_dts
@@ -140,7 +153,7 @@ FROM
 )x
 WHERE x.enc_rnk = 1
 
---CTE
+-- CTE
 WITH patients_encounters AS
 (
 		SELECT p.patient_id
