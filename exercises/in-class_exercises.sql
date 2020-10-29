@@ -10,34 +10,44 @@ SELECT 'hello' + ' there ' + 'friends!'
 SELECT UPPER('hello')
 
 --INNER JOIN (The 'INNER' is optional)
-SELECT p.patient_id
-		, p.patient_nm
-		, p.dob
-		, p.gender_cd
-		, gc.gender_title
+SELECT p.patient_id,
+       p.patient_nm,
+       p.dob,
+       p.gender_cd,
+       gc.gender_title
 FROM edw_emr_ods.patients p
-	INNER JOIN edw_emr_ods.gender_codes gc
-	 ON p.gender_cd = gc.gender_code_id
+INNER JOIN edw_emr_ods.gender_codes gc
+ON p.gender_cd = gc.gender_code_id
 
---LEFT OUTER JOIN (The 'OUTER' is optional)
-SELECT p.patient_id
-		, p.patient_nm
-		, p.dob
-		, p.gender_cd
-		, gc.gender_title
+-- LEFT OUTER JOIN (The 'OUTER' is optional)
+SELECT p.patient_id,
+       p.patient_nm,
+			 p.dob,
+			 p.gender_cd,
+			 gc.gender_title
 FROM edw_emr_ods.patients p
-	LEFT OUTER JOIN edw_emr_ods.gender_codes gc
-	 ON p.gender_cd = gc.gender_code_id
+LEFT OUTER JOIN edw_emr_ods.gender_codes gc
+ON p.gender_cd = gc.gender_code_id
 
---The Cartesian JOIN (Explicit)
+-- RIGHT OUTER JOIN (The 'OUTER' is optional)
+SELECT p.patient_id,
+       p.patient_nm,
+       p.dob,
+       p.gender_cd,
+       gc.gender_title
+FROM edw_emr_ods.patients p
+RIGHT OUTER JOIN edw_emr_ods.gender_codes gc
+ON p.gender_cd = gc.gender_code_id
+
+-- The Cartesian JOIN (Explicit)
 SELECT *
 FROM edw_emr_ods.patients p CROSS JOIN edw_emr_ods.gender_codes gc;
 
---The Cartesian JOIN (Implicit)
+-- The Cartesian JOIN (Implicit)
 SELECT *
 FROM edw_emr_ods.patients p, edw_emr_ods.gender_codes gc;
 
---DISTINCT
+-- DISTINCT
 SELECT pm.patient_id
 FROM edw_emr_ods.patient_mrns pm
 
@@ -130,7 +140,6 @@ FROM
 )x
 WHERE x.enc_rnk = 1
 
-
 --CTE
 WITH patients_encounters AS
 (
@@ -146,7 +155,6 @@ WITH patients_encounters AS
 SELECT *
 FROM patients_encounters pe
 WHERE pe.enc_rnk = 1
-
 
 -- TEMP TABLE
 SELECT p.patient_id
