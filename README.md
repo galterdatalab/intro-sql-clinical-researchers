@@ -16,4 +16,4 @@ Prior to attending this workshop, participants should install one of the followi
 
 ## Important Links
 
-* [Google Slides](https://docs.google.com/presentation/d/1IGrDnnwuvebE3iUSCdFDHwBZKDIQza8PjpuVW739Cuw/edit#slide=id.g8c361ae6b1_0_13)
+* [Google Slides](https://docs.google.com/presentation/d/1IGrDnnwuvebE3iUSCdFDHwBZKDIQza8PjpuVW739Cuw/edit?usp=sharing)
