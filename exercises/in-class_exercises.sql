@@ -227,3 +227,54 @@ SELECT LTRIM('   HELLO')
 SELECT SUBSTRING('HELLO', 1, 2)
 SELECT REPLACE('HELLO','LO','P!')
 SELECT LEFT('HELLO', 2)
+
+-- Need to add slides for the following:
+
+-- SUB QUERY
+SELECT x.patient_id
+		, x.patient_nm
+		, x.start_dts
+		, x.enc_rnk
+FROM
+(
+	SELECT p.patient_id
+			, p.patient_nm
+			, e.start_dts
+			, RANK() OVER (partition by p.patient_id ORDER BY e.start_dts DESC) AS enc_rnk
+	FROM edw_emr_ods.patients p
+		INNER JOIN edw_emr_ods.encounters e
+		 ON p.patient_id = e.patient_id
+)x
+WHERE x.enc_rnk = 1
+
+-- CTE
+WITH patients_encounters AS
+(
+		SELECT p.patient_id
+			, p.patient_nm
+			, e.start_dts
+			, RANK() OVER (partition by p.patient_id ORDER BY e.start_dts DESC) AS enc_rnk
+		FROM edw_emr_ods.patients p
+			INNER JOIN edw_emr_ods.encounters e
+				ON p.patient_id = e.patient_id
+)
+
+SELECT *
+FROM patients_encounters pe
+WHERE pe.enc_rnk = 1
+
+-- TEMP TABLE
+SELECT p.patient_id
+	, p.patient_nm
+	, e.start_dts
+	, RANK() OVER (partition by p.patient_id ORDER BY e.start_dts DESC) AS enc_rnk
+INTO #patients_encounters
+FROM edw_emr_ods.patients p
+	INNER JOIN edw_emr_ods.encounters e
+	  ON p.patient_id = e.patient_id
+
+SELECT *
+FROM #patients_encounters pe
+WHERE pe.enc_rnk = 1
+
+DROP TABLE #patients_encounters
