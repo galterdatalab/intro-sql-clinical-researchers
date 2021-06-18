@@ -229,6 +229,7 @@ SELECT REPLACE('HELLO','LO','P!')
 SELECT LEFT('HELLO', 2)
 
 -- Need to add slides for the following:
+-- https://www.c-sharpcorner.com/article/difference-among-cte-derived-table-temp-table-sub-query/
 
 -- SUB QUERY
 SELECT x.patient_id
@@ -241,27 +242,29 @@ FROM
 			, p.patient_nm
 			, e.start_dts
 			, RANK() OVER (partition by p.patient_id ORDER BY e.start_dts DESC) AS enc_rnk
-	FROM edw_emr_ods.patients p
-		INNER JOIN edw_emr_ods.encounters e
+	FROM patients p
+		INNER JOIN encounters e
 		 ON p.patient_id = e.patient_id
 )x
 WHERE x.enc_rnk = 1
 
+
 -- CTE
-WITH patients_encounters AS
+WITH patients_encounters AS -- can also add variable names that coincide with those from 'patients', e.g., (pat_id, pat_nm, s_date, enc_rank)
 (
 		SELECT p.patient_id
 			, p.patient_nm
 			, e.start_dts
 			, RANK() OVER (partition by p.patient_id ORDER BY e.start_dts DESC) AS enc_rnk
-		FROM edw_emr_ods.patients p
-			INNER JOIN edw_emr_ods.encounters e
+		FROM patients p
+			INNER JOIN encounters e
 				ON p.patient_id = e.patient_id
 )
 
 SELECT *
 FROM patients_encounters pe
 WHERE pe.enc_rnk = 1
+
 
 -- TEMP TABLE
 SELECT p.patient_id
@@ -270,7 +273,7 @@ SELECT p.patient_id
 	, RANK() OVER (partition by p.patient_id ORDER BY e.start_dts DESC) AS enc_rnk
 INTO #patients_encounters
 FROM edw_emr_ods.patients p
-	INNER JOIN edw_emr_ods.encounters e
+	INNER JOIN encounters e
 	  ON p.patient_id = e.patient_id
 
 SELECT *
