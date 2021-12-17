@@ -1,5 +1,4 @@
 -- Basic Operations
-
 SELECT 2 + 4
 SELECT ROUND(2.5834, 2)
 SELECT 'Hello' + ' there ' + 'friends!'
@@ -52,7 +51,6 @@ FROM diagnoses
 WHERE title in ('Shortness of breath', 'Chest pain')
 
 -- NULL, IS NULL, IS NOT NULL
-
 SELECT start_dts, end_dts
 FROM edw_emr_ods.encounters
 WHERE patient_id = '1'
@@ -66,7 +64,6 @@ FROM edw_emr_ods.encounters
 WHERE patient_id = '1' AND end_dts IS NOT NULL
 
 -- (NOT) LIKE
-
 SELECT *
 FROM edw_emr_ods.encounters enc
 WHERE enc.start_dts LIKE '%2011-04-02%'
@@ -169,14 +166,12 @@ AND p1.gender_cd = p2.gender_cd
 ORDER BY p1.gender_cd
 
 -- Cross Join (DANGER!!!)
-
 SELECT *
 FROM patients p
 CROSS JOIN gender_codes gc; -- Explicit
 
 SELECT *
 FROM patients p, gender_codes gc; -- Implicit
-
 
 -- Aggregate Function: COUNT()
 SELECT COUNT(*)
@@ -185,7 +180,6 @@ FROM encounters
 -- Aggregate Functions: MIN(), MAX()
 SELECT MIN(end_dts)
 FROM encounters
-
 
 -- Ranking Functions: RANK(), ROW_NUMBER()
 -- “ROW_NUMBER numbers all rows sequentially. RANK provides the same numeric value for ties.
@@ -228,9 +222,6 @@ SELECT SUBSTRING('HELLO', 1, 2)
 SELECT REPLACE('HELLO','LO','P!')
 SELECT LEFT('HELLO', 2)
 
--- Need to add slides for the following:
--- https://www.c-sharpcorner.com/article/difference-among-cte-derived-table-temp-table-sub-query/
-
 -- SUB QUERY
 SELECT x.patient_id
 		, x.patient_nm
@@ -248,8 +239,7 @@ FROM
 )x
 WHERE x.enc_rnk = 1
 
-
--- CTE
+-- Same results with a Common Table Expression (CTE)
 WITH patients_encounters AS -- can also add variable names that coincide with those from 'patients', e.g., (pat_id, pat_nm, s_date, enc_rank)
 (
 		SELECT p.patient_id
@@ -265,8 +255,7 @@ SELECT *
 FROM patients_encounters pe
 WHERE pe.enc_rnk = 1
 
-
--- TEMP TABLE
+-- Same results using a TEMP TABLE
 SELECT p.patient_id
 	, p.patient_nm
 	, e.start_dts
