@@ -1,0 +1,41 @@
+## Warm up!
+
+1.	How many departments are in the hospital database?
+
+2.	How many encounters has the patient with 'patient_id' 1 have?
+
+3.	How many of Patient 1's encounters are missing a discharge time ('end_dts' value = NULL)?
+
+4.	Which provider has worked the most encounters in the database?
+
+5.	Which patient has the first (oldest) encounter in the hospital database?
+
+## More Advanced Queries
+
+6.	List the provider's name and title (in one field) by the number of patient encounters they've had in order from most to least
+
+7.	List all patients with a diagnosis of 'hypertension', the diagnosis date, and their provider
+
+8.	List the code and title of each diagnosis and count how many diagnoses of each type there have been */
+
+9.	List the current ages of all patients
+
+10.	List all of the encounter_ids from the internal medicine group, along with start and end dates and provider names
+
+11.	List all of the encounters recorded by nurses
+
+12.	List all of the providers that share patients with Nick Riviera along with the number of patients they share with him
+
+13.	Which patient has had contact with the most doctors? (Order from greatest to least doctors seen)
+
+14.	Create a new column that shows three categories of admission dates: Before 2005, 2005-2010, and After 2010. Next, find out 1) how many encounters and 2) how many patients occurred within these date categories
+
+15.	List all encounters where end_dts is NULL (then list all encounters where end_dts is any year but 2011)
+
+16.	Find out how long each patient encounter lasted. There are only 5 encounters where the end_dts is not NULL, and two of those have 'negative time',
+
+17.	List all of the encounters and who the records were entered by, or '?' if this is unknown.
+
+18.	Which department had the most admissions from 2005 to 2011?
+
+19.	List all of the providers that share patients with Nick Riviera along with the number of patients they share with him
