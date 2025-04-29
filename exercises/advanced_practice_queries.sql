@@ -1,10 +1,117 @@
+/*
+
+Warm up!
+
+*/
+
 /* Query 1
+
+How many departments are in the hospital database?
+
+Answer = 5
+
+*/
+
+SELECT *
+FROM departments d
+
+-- or
+
+SELECT COUNT(*)
+FROM departments d
+
+/* Query 2
+
+How many encounters has the patient with 'patient_id' 1 have?
+
+Answer = 4
+
+*/
+
+SELECT count(*)
+FROM encounters
+WHERE patient_id = '1'
+
+/* Query 3
+
+How many of Patient 1's encounters are missing a discharge time ('end_dts' value = NULL)?
+
+Answer = 2
+
+*/
+
+SELECT *
+FROM encounters
+WHERE patient_id = '1'
+
+-- or, even better...
+
+SELECT *
+FROM encounters
+WHERE patient_id = '1' AND end_dts IS NULL
+
+/* Query 4
+
+Which provider has worked the most encounters in the database?
+
+Answer = provider_id 5 has worked 11 encounters
+
+*/
+
+SELECT COUNT(encounter_id) AS "Number of Encounters", provider_id
+FROM encounters
+GROUP BY provider_id
+ORDER BY  "Number of Encounters" DESC
+
+/* Query 5
+
+Which patient has the first (oldest) encounter in the hospital database?
+
+Answer = Patient 4, Elaine Benes
+
+*/
+
+-- Using a TEMP TABLE
+--
+-- Returns a list of patients and their encounters ranked by the start time of their encounters, with the oldest listed first
+
+SELECT p.patient_id
+	, p.patient_nm
+	, e.start_dts
+	, RANK() OVER (partition by p.patient_id ORDER BY e.start_dts ASC) AS enc_rnk
+INTO #patients_encounters
+FROM edw_emr_ods.patients p
+	INNER JOIN encounters e
+	  ON p.patient_id = e.patient_id
+
+-- Now that you have the oldest encounter for each patient, find out which patient has the oldest encounter of all
+
+SELECT *
+FROM #patients_encounters pe
+WHERE pe.enc_rnk = 1
+ORDER BY pe.start_dts
+
+
+/* More Advanced Queries
+
+	 NOTE:
+   'edw.emr.ods' is the name of the database schema and it is sometimes added as a prefix to the table name. This is an explicit way
+	 of identifying which schema the table comes from (some databases have more than one schema). This database has only one schema,
+	 so it's not necessary to include it, but I've done so here to show how it works.
+
+	 For reference, I've included SELECT * statements that are relevant for each query in case you want to check the table contents
+*/
+
+
+/* Query 6
 
 List the provider's name and title (in one field) by the number of patient encounters they've had in order from most to least
 
 */
 
---SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+--select * FROM edw_emr_ods.departments
 --select * FROM edw_emr_ods.diagnoses
 --select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_code
@@ -15,22 +122,26 @@ select * FROM edw_emr_ods.encounters
 select * FROM edw_emr_ods.providers
 
 
-SELECT p.provider_nm + ', ' + p.title AS [name/title], COUNT(e.provider_id) AS [encounter count],
+SELECT p.provider_nm + ',' + p.title AS [name/title], COUNT(e.provider_id) AS [encounter count],
 DENSE_RANK() OVER (ORDER BY COUNT(e.provider_id) DESC) AS ranking
 FROM edw_emr_ods.providers as p
 LEFT JOIN edw_emr_ods.encounters as e
 ON p.provider_id=e.provider_id
-AND deleted_ind <> 1 -- Make sure record is not deleted
+AND deleted_ind <> 1 -- Record is not deleted
 AND start_dts IS NOT NULL -- Make sure there's a start date
 AND start_dts <= GETDATE() -- Ignore any "future dates" (bad data)
 GROUP BY p.provider_nm,p.title
 
 
-/* Query 2
-   List all patients with a diagnosis of 'hypertension', the diagnosis date, and their provider
+/* Query 7
+
+	 List all patients with a diagnosis of 'hypertension', the diagnosis date, and their provider
+
 */
 
---SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+--select * FROM edw_emr_ods.departments
 select * FROM edw_emr_ods.diagnoses
 select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -58,12 +169,15 @@ AND start_dts IS NOT NULL
 GROUP BY p.patient_nm,e.start_dts,pr.provider_nm
 
 
+/* Query 8
 
-/* Query 3
-   List the code and title of each diagnosis and count how many diagnoses of each type there have been */
+	 List the code and title of each diagnosis and count how many diagnoses of each type there have been
+
 */
 
---SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+--select  * FROM edw_emr_ods.departments
 select * FROM edw_emr_ods.diagnoses
 select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -111,8 +225,10 @@ GROUP BY d.code,d.title
 ORDER BY count DESC
 
 
-/* Query 4
+/* Query 9
+
    List the current ages of all patients
+
 */
 
 --This way is not precise
@@ -130,12 +246,15 @@ SELECT patient_nm,dob,DATEDIFF(hour,dob,GETDATE())/8766.0 AS AgeYearsDecimal
 FROM edw_emr_ods.patients
 
 
-/* Query 5
+/* Query 10
+
    List all of the encounter_ids from the internal medicine group, along with start and end dates and provider names
+
 */
 
--- Ref
-SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+select * FROM edw_emr_ods.departments
 --select * FROM edw_emr_ods.diagnoses
 --select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -145,7 +264,6 @@ select * FROM edw_emr_ods.encounters
 --select * FROM edw_emr_ods.patients
 select * FROM edw_emr_ods.providers
 --
-
 
 SELECT d.department_nm,e.encounter_id,e.start_dts,e.end_dts,p.provider_nm
 FROM edw_emr_ods.encounters as e
@@ -160,12 +278,15 @@ AND start_dts <= GETDATE()
 ORDER BY p.provider_nm,e.start_dts
 
 
-/* Query 6
+/* Query 11
+
    List all of the encounters recorded by nurses
+
 */
 
--- Ref
---SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+--select * FROM edw_emr_ods.departments
 --select * FROM edw_emr_ods.diagnoses
 --select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -198,12 +319,15 @@ GROUP BY e.encounter_id,provider_nm,p.title
 HAVING p.title = 'RN'
 ORDER BY provider_nm
 
-/* Query 7
+/* Query 12
+
    List all of the providers that share patients with Nick Riviera along with the number of patients they share with him
+
 */
 
--- Ref
---SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+--select * FROM edw_emr_ods.departments
 --select * FROM edw_emr_ods.diagnoses
 --select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -237,12 +361,15 @@ FROM Q
 GROUP BY provider_nm
 
 
-/* Query 8
+/* Query 13
+
    Which patient has had contact with the most doctors? (Order from greatest to least doctors seen)
+
 */
 
--- Ref
---SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+--select * FROM edw_emr_ods.departments
 --select * FROM edw_emr_ods.diagnoses
 --select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -263,13 +390,16 @@ WHERE start_dts IS NOT NULL
 GROUP BY e.patient_id,p.patient_nm
 ORDER BY [# of docs seen] DESC
 
-/* Query 9
+/* Query 14
+
    Create a new column that shows three categories of admission dates: Before 2005, 2005-2010, and After 2010. Next, find out 1) how many
    encounters and 2) how many patients occurred within these date categories
+
 */
 
--- Ref
---SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+--select * FROM edw_emr_ods.departments
 --select * FROM edw_emr_ods.diagnoses
 --select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -302,8 +432,10 @@ FROM Q
 GROUP BY [date category]
 
 
-/* Query 10
+/* Query 15
+
    List all encounters where end_dts is NULL (then list all encounters where end_dts is any year but 2011)
+
 */
 
 -- Must use 'IS NULL' and not '='. See three value logic explanation at the top of the page
@@ -322,13 +454,16 @@ FROM edw_emr_ods.encounters
 WHERE end_dts < '1/1/2011' OR end_dts > '12/31/2011'
 
 
-/* Query 11
+/* Query 16
+
    Find out how long each patient encounter lasted. There are only 5 encounters where the end_dts is not NULL, and two of those have 'negative time',
    which is obviously bad data.
+
 */
 
--- Ref
---SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+--select * FROM edw_emr_ods.departments
 --select * FROM edw_emr_ods.diagnoses
 --select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -350,7 +485,8 @@ CASE
 END AS duration
 FROM edw_emr_ods.encounters
 
-/* Query 12
+/* Query 17
+
    List all of the encounters and who the records were entered by, or '?' if this is unknown.
 
    An example using COALESCE(). Without using CONVERT() or CAST() to change entered_by_provider_id to an NVARCHAR, I get this error
@@ -358,10 +494,12 @@ FROM edw_emr_ods.encounters
    Conversion failed when converting the nvarchar value '?' to data type tinyint.
 
    CAST() is preferred over CONVERT() and PARSE() because CAST() is ANSI-compliant (see page 82 in book)
+
 */
 
--- Ref
---SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+--select * FROM edw_emr_ods.departments
 --select * FROM edw_emr_ods.diagnoses
 select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -371,18 +509,21 @@ select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.patients
 --select * FROM edw_emr_ods.providers
 --
-GO;
+
 
 SELECT encounter_id, encounter_diagnoses_id,diagnosis_id,COALESCE(CAST(entered_by_provider_id AS NVARCHAR), N'?') AS [entered by...]
 FROM edw_emr_ods.encounter_diagnoses
 ORDER BY [entered by...] DESC
 
-/* Query 13
+/* Query 18
 
    Which department had the most admissions from 2005 to 2011?
+
 */
 
-SELECT * FROM edw_emr_ods.departments
+-- Reference
+
+select * FROM edw_emr_ods.departments
 --select * FROM edw_emr_ods.diagnoses
 --select * FROM edw_emr_ods.encounter_diagnoses
 --select * FROM edw_emr_ods.encounter_type_codes
@@ -405,8 +546,7 @@ AND deleted_ind <> 1
 GROUP BY e.department_id,d.department_nm
 
 
-/*
-Query 14
+/* Query 19
 
 List all of the providers that share patients with Nick Riviera along with the
 number of patients they share with him
