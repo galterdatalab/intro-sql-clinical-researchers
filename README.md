@@ -1,5 +1,7 @@
 # Introduction to SQL for Clinical Researchers
 
+## Overview
+
 This workshop provides an introduction to databases and the Structured Query Language (SQL) for clinical researchers. Topics covered include:
 
 * Introduction to databases
@@ -8,6 +10,8 @@ This workshop provides an introduction to databases and the Structured Query Lan
 * Recognizing bad data
 * Documentation and metadata
 * In-class programming exercises using a mock clinical database
+
+## Prerequisites
 
 Prior to attending this workshop, participants should install one of the following SQL clients to run example queries in real time:
 
